@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<textarea id="text" name="story"
+		          rows="5" cols="33">
+		</textarea>
+		<button id="submit">计算结果</button>
+		<script type="text/javascript">
+			var button=document.getElementById("submit")
+			button.addEventListener("click",function(){
+				var text = document.getElementById("text").value
+				if(text==""){
+					alert("请输入计算表达式")
+				}else{
+					let myBody=document.body
+					let box=document.getElementById("result")
+					if(box){
+						myBody.removeChild(box)
+					}
+					let res=document.createElement("div")
+					res.id="result"
+					function getRank(op){
+					    if(op=="+"||op=="-") return 1;
+					    if(op=="*"||op=="/") return 2;
+					    return 0;
+					}
+					function calc(a,b,op){
+					    if(op=="+") return a+b;
+					    if(op=="-") return a-b;
+					    if(op=="*") return a*b;
+					    if(op=="/") return a/b;
+					}
+					function evalRPN(tokens){
+					    var stack=[]
+					    for(token of tokens){
+					        if(token=="+"||token=="-"||token=="*"||token=="/"){
+					            b=stack.pop()
+					            a=stack.pop()
+					            stack.push(calc(a,b,token))
+					        }else{
+					            stack.push(token)
+					        }
+					    }
+					    return stack[0]
+					}
+					function calculate(text){
+					    var regexp=/([0-9\.]+)|([ \t]+)|([\r\n]+)|([\'\"]+)|([\*\/\+\-\(\)])/g
+					    var dic=["Number","Whitespace","LineTerminator","Quotation","ops"]
+					    var tokens=[]
+					    var ops=[]
+					    var needs_zero=true
+					    var str=null
+					    while(true){
+					        str=regexp.exec(text)
+					        if(!str){
+					            break
+					        }
+					        for(let i=1;i<=dic.length;i++){
+					            if(str[i]){
+					                if (dic[i-1]=="Whitespace" || dic[i-1]=="LineTerminator" || dic[i-1]=="Quotation"){
+					                    continue
+					                }else if(dic[i-1]=="Number"){
+					                    tokens.push(Number(str[i]))
+					                    needs_zero=false
+					                    continue
+					                }else if(str[i]=="("){
+					                    ops.push(str[i])
+					                    needs_zero=true
+					                    continue
+					                }else if(str[i]==")"){
+					                    while(ops[ops.length-1]!="("){
+					                        tokens.push(ops.pop())
+					                    }
+					                    ops.pop()
+					                    needs_zero=false
+					                    continue
+					                }
+					                if(needs_zero){
+					                    tokens.push(0)
+					                }
+					                while(ops.length!=0 && getRank(ops[ops.length-1])>=getRank(str[i])){
+					                    tokens.push(ops.pop())
+					                }
+					                ops.push(str[i])
+					                needs_zero=true
+					                break
+					            }
+					        }
+					    }
+					    while(ops.length!=0){
+					        tokens.push(ops.pop())
+					    }
+					    return evalRPN(tokens)
+					}
+					res.innerHTML=`${text}=${calculate(text)}`
+					myBody.appendChild(res)
+				}
+			})
+		</script>
+	</body>
+</html>

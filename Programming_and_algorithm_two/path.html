@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			#container{
+				margin: 10px 0;
+				width: 1005px;
+			}
+			.cell{
+				width: 9px;
+				height: 9px;
+				border-right: solid 1px white;
+				border-bottom: solid 1px white;
+				background-color: gray;
+				display: inline-flexbox;
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		<div >
+			<button type="button" id="clear">清空画布</button>
+			<button type="button" onclick="localStorage.map=JSON.stringify(map)">保存地图</button>
+			</div>
+		<div >
+			起点x坐标<input type="number" min="0" max="99" id="startx">起点y坐标<input type="number" min="0" max="99" id="starty"/> 终点x坐标<input type="number" min="0" max="99" id="endx"/> 终点y坐标<input type="number" min="0" max="99" id="endy"/> 
+			<button id="confirm">确认</button>
+		</div>
+		<div id="container"></div>
+		<script type="text/javascript">
+			var map=localStorage.map?JSON.parse(localStorage.map):new Array(10000).fill(0)
+			let container=document.getElementById("container")
+			let mousedown=false
+			let clear=false
+			for(let y=0;y<100;y++){
+				for(let x=0;x<100;x++){
+					let cell=document.createElement("div")
+					cell.classList.add("cell")
+					if(map[100*y+x]==1){
+						cell.style.backgroundColor="black"
+					}
+					cell.addEventListener("mousemove",()=>{
+						if(mousedown){
+							if(clear){
+								cell.style.backgroundColor=""
+								map[100*y+x]=0
+							}else{
+								cell.style.backgroundColor="black"
+								map[100*y+x]=1
+							}
+						}
+					})
+					container.appendChild(cell)
+				}
+			}
+			var clearcan=document.getElementById("clear")
+			clearcan.addEventListener("click",()=>{
+				localStorage.clear()
+				map=new Array(10000).fill(0)
+				for(let y=0;y<100;y++){
+					for(let x=0;x<100;x++){
+						container.children[100*y+x].style.backgroundColor=""
+					}
+				}
+			})
+			document.addEventListener("mousedown",e=>{
+				mousedown=true
+				clear=(e.which==3)
+			})
+			document.addEventListener("mouseup",()=>{
+				mousedown=false
+			})
+			document.addEventListener("contextmenu",e=>e.preventDefault())
+			var confirm=document.getElementById("confirm")
+			confirm.addEventListener("click",async function go(){
+				var sx = document.getElementById("startx").value
+				if (sx==""){
+					alert("请输入起点x坐标")
+				}
+				var sy = document.getElementById("starty").value
+				if (sy==""){
+					alert("请输入起点y坐标")
+				}
+				var ex = document.getElementById("endx").value
+				if (ex==""){
+					alert("请输入终点x坐标")
+				}
+				var ey = document.getElementById("endy").value
+				if (ey==""){
+					alert("请输入终点y坐标")
+				}
+				await findPath(map,parseInt(sx),parseInt(sy),parseInt(ex),parseInt(ex))
+				
+			})
+			function sleep(t){
+				return new Promise(function(resolve){
+					setTimeout(resolve,t)
+				})
+			}
+			class Heap{
+				constructor(compare) {
+				    this.heap=[]
+					this.compare=compare
+					this.size=0
+				}
+				isEmpty(){
+					return this.size==0
+				}
+				add(v){
+					this.heap.push(v)
+					this.up(this.size)
+					this.size+=1
+				}
+				up(index){
+					if(index>0){
+						let parent=(index-1)>>1
+						if(this.compare(this.heap[parent],this.heap[index])<0){
+							this.swap(index,parent)
+							this.up(parent)
+						}
+					}
+				}
+				swap(p,q){
+					let temp=this.heap[p]
+					this.heap[p]=this.heap[q]
+					this.heap[q]=temp
+				}
+				pop(){
+					let res=this.heap[0]
+					this.size-=1
+					this.swap(0,this.size)
+					this.heap.pop()
+					if(this.size>0){
+						this.down(0)
+					}
+					return res
+				}
+				down(index){
+					let leftchild=index<<1+1
+					let rightchild=index<<1+2
+					let cur=index
+					if(rightchild<this.size && this.compare(this.heap[rightchild],this.heap[index])<0){
+						cur=rightchild
+					}
+					if(leftchild<this.size && this.compare(this.heap[leftchild],this.heap[index])<0){
+						cur=leftchild
+					}
+					if(cur!=index){
+						this.swap(index,cur)
+						this.down(cur)
+					}
+				}
+			}
+			function getindex(x,y){
+				return x+y*100
+			}
+			function getpos(index){
+				return [Math.floor(index/100),index%100]
+			}
+			async function findPath(map,startx,starty,endx,endy){
+				var from={}
+				var cur=getindex(startx,starty)
+				from[cur]=-1
+				function distance(index){
+					let [y,x]=getpos(index)
+					return (y-endy)**2+(x-endx)**2
+				}
+				let queue=new Heap((a,b)=>distance(a)-distance(b))
+				queue.add(cur)
+				var target=getindex(endx,endy)
+				container.children[cur].style.backgroundColor="red"
+				container.children[target].style.backgroundColor="green"
+				map[cur]=0
+				map[target]=0
+				async function insert(nxt,cur){
+					if(map[nxt]!=0){
+						return null
+					}
+					if(nxt in from){
+						return null
+					}
+					from[nxt]=cur
+					container.children[nxt].style.backgroundColor="lightblue"
+					if(nxt==target){
+						let path=[]
+						while(from[nxt]!=-1){
+							path.push(nxt)
+							await sleep(2)
+							container.children[nxt].style.backgroundColor="blue"
+							nxt=from[nxt]
+						}
+						return path
+					}
+					await sleep(4)
+					queue.add(nxt)
+				}
+				while(!queue.isEmpty()){
+					let next=queue.pop()
+					
+					let [y,x]=getpos(next)
+					for(let i=-1;i<=1;i++){
+						for(let j=-1;j<=1;j++){
+							if(i==0 && j==0){
+								continue
+							}
+							if(x+i>=0 && x+i<100 && y+j>=0 && y+j<100){
+								let path=await insert(getindex(x+i,y+j),next)
+								if(path!=null){
+									return
+								}
+							}
+						}
+					}
+				}
+				alert("没有找到路径")
+			}
+		</script>
+	</body>
+</html>
