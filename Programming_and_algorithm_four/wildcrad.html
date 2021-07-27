@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div>请输入字符串：<input type="text" id="source" /></div>
+		<div>请输入字符模式：<input type="text" id="pattern" /></div>
+		<button id="submit">确认</button>
+		<script type="text/javascript">
+			var botton=document.getElementById("submit")
+			function find(source,pattern){
+				let star=0
+				for(let i=0;i<pattern.length;i++){
+					if (pattern[i]=="*"){
+						star++;
+					}
+				}
+				if(star==0){
+					if(source.length!=pattern.length){
+						return false
+					}
+					for(let i=0;i<pattern.length;i++){
+						if(source[i]!=pattern[i] && pattern[i]!="?"){
+							return false
+						}
+					}
+					return true
+				}
+				let i;
+				for(i=0;pattern[i]!="*";i++){
+					if(source[i]!=pattern[i] && pattern[i]!="?"){
+						return false
+					}
+				}
+				let lastindex=i;
+				for(let p=0;p<star-1;p++){
+					i++;
+					let sub="";
+					while(pattern[i]!="*"){
+						sub+=pattern[i];
+						i++;
+					}
+					let re=new RegExp(sub.replace(/\?/g,"[\\s\\S]"),"g");
+					re.lastIndex=lastindex;
+					if(!re.exec(source)){
+						return false
+					}
+					lastindex=re.lastIndex
+				}
+				for(let j=1;j<=source.length-lastindex&&pattern[pattern.length-j]!="*";j++){
+					if(source[source.length-j]!=pattern[pattern.length-j] && pattern[pattern.length-j]!="?"){
+						return false
+					}
+				}
+				return true
+			}
+			botton.addEventListener("click",function(){
+				var source=document.getElementById("source").value
+				var pattern=document.getElementById("pattern").value
+				let myBody=document.body
+				let box=document.getElementById("result")
+				if(box){
+					myBody.removeChild(box)
+				}
+				let res=document.createElement("div")
+				res.id="result"
+				let pos=find(source,pattern)
+				if (pos){
+					res.innerHTML=`字符串${source}与字符模式${pattern}匹配`
+				}else{
+					res.innerHTML=`字符串${source}与字符模式${pattern}不匹配`
+				}
+				myBody.appendChild(res)
+			})
+		</script>
+	</body>
+</html>

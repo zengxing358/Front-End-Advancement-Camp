@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			class Trie{
+				constructor() {
+				    this.root=Object.create(null);
+				}
+				insert(word){
+					let node=this.root;
+					for(let w of word){
+						if(!node[w]){
+							node[w]=Object.create(null);
+						}
+						node=node[w];
+					}
+					if(!("#" in node)){
+						node["#"]=0;
+					}
+					node["#"]++;
+				}
+				most(){
+					let maxnum=0;
+					let maxWord=null;
+					let visit=(node,word)=>{
+						if(node["#"] && node["#"]>maxnum){
+							maxnum=node["#"];
+							maxWord=word;
+						}
+						for(let n in node){
+							visit(node[n],word+n);
+						}
+					}
+					visit(this.root,"");
+					document.write(`出现最多的字符串是${maxWord} 出现次数为${maxnum}`);
+				}
+			}
+			function randomWord(length){
+				var s="";
+				for(let i=0;i<length;i++){
+					s+=String.fromCharCode(Math.random()*26+"a".charCodeAt(0));
+				}
+				return s;
+			}
+			let tire=new Trie();
+			for(let i=0;i<100000;i++){
+				tire.insert(randomWord(4))
+			}
+			tire.most()
+		</script>
+	</body>
+</html>

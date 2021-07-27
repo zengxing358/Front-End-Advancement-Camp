@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div>请输入字符串：<input type="text" id="source" /></div>
+		<div>请输入字符模式：<input type="text" id="pattern" /></div>
+		<button id="submit">确认</button>
+		<script type="text/javascript">
+			var botton=document.getElementById("submit")
+			function kmp(source,pattern){
+				if(!pattern.length){
+					return 0;
+				}
+				let table=new Array(pattern.length).fill(0)
+				{
+				let i=0,j=1;
+				while(j<pattern.length){
+					if(pattern[i]==pattern[j]){
+						i++;
+						j++;
+						table[j]=i;
+					}else{
+						if(i==0){
+							j++;
+						}else{
+							i=table[i];
+						}
+					}
+				}
+				}
+				{
+				let i=0,j=0;
+				while(i<source.length){
+					if(pattern[j]==source[i]){
+						i++;
+						j++;
+					}else{
+						if(j>0){
+							j=table[j];
+						}else{
+							i++;
+						}
+					}
+					if(j==pattern.length){
+						return i-j;
+					}
+				}
+				return -1;
+				}
+			}
+			botton.addEventListener("click",function(){
+				var source=document.getElementById("source").value
+				var pattern=document.getElementById("pattern").value
+				let myBody=document.body
+				let box=document.getElementById("result")
+				if(box){
+					myBody.removeChild(box)
+				}
+				let res=document.createElement("div")
+				res.id="result"
+				let pos=kmp(source,pattern)
+				if (pos==-1){
+					res.innerHTML=`字符串${source}中无字符模式${pattern}`
+				}else{
+					res.innerHTML=`字符串${source}中第${pos+1}个字符开始出现字符模式${pattern}`
+				}
+				myBody.appendChild(res)
+			})
+		</script>
+	</body>
+</html>
