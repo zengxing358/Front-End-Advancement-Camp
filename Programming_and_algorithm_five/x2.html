@@ -1,0 +1,58 @@
+<div id="container">css3中translate用法是怎么样的？css中位移translate()如何使用？这些可能一些新手学习css所遇到的问题，接下来我们就来讲解一下css中位移translate()如何使用？
+    一：translate()用法
+    在css样式中，很多人都喜欢使用translate()来表示位移，可以使用translate()中的x和y来表示元素在水平方向或者垂直方向上移动。
+    例如：1.translateY(y)：表示该元素在垂直方向上移动，也就是我们所说的y轴
+    2.translateX(x):表示该元素在水平方向上移动，也就是我们所说的x轴
+    二：translate()语法
+    系统应该支持多版本，哪怕是老的客户端调用新的服务端，或者相反
+    在Thrift和protobuf中，多版本是通过字段标识符实现的
+    正在使用的字段，请不要更新整数标识符
+    可以删除不在使用的字段，原标识符可以分给其他字段
+    PB中[deprecated=true]标识废弃字段
+    字段标识符和字段类型唯一标识一个字段
+    不需要重新编译新版本</div>
+<div id="dragable" style="display:inline-block;width:100px;height:100px;background-color: pink;"></div>
+<script>
+    let dragable = document.getElementById("dragable");
+    let baseX = 0, baseY = 0;
+    dragable.addEventListener("mousedown", function (event) {
+        let startX = event.clientX, startY = event.clientY;
+        let up = () => {
+            baseX = baseX + event.clientX - startX;
+            baseY = baseY + event.clientY - startY
+            document.removeEventListener("mousemove", move);
+            document.removeEventListener("mouseup", up);
+        }
+        let move = event => {
+            // dragable.style.transform = `translate(${baseX + event.clientX - startX}px,${baseY + event.clientY - startY}px)`;
+            let range = getNearest(event.clientX, event.clientY);
+            range.insertNode(dragable);
+        }
+        document.addEventListener("mousemove", move);
+        document.addEventListener("mouseup", up);
+    })
+    let ranges = [];
+    let container = document.getElementById("container");
+    for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+        let range = document.createRange();
+        range.setStart(container.childNodes[0], i);
+        range.setEnd(container.childNodes[0], i);
+        ranges.push(range);
+    }
+
+    function getNearest(x, y) {
+        let min = Infinity;
+        let nearest = null;
+
+        for (let range of ranges) {
+            let rect = range.getBoundingClientRect();
+            let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2;
+            if (distance < min) {
+                nearest = range;
+                min = distance;
+            }
+        }
+        return nearest
+    }
+    document.addEventListener("selectstart", event => event.preventDefault());
+</script>
