@@ -48,13 +48,13 @@ export function* scan(str) {
         Comments: /\/\*(?:[^*]|\*[^\/])*\*\/|\/\/[^\n]*/,
         Token: "<Literal>|<Keywords>|<Identifier>|<Punctuator>",
         Literal: "<NumericLiteral>|<BooleanLiteral>|<StringLiteral>|<NullLiteral>",
-        NumericLiteral: /(?:[1-9][0-9]*|0)(?:\.[0-9])?|\.[0-9]+/,
+        NumericLiteral: /0x[0-9a-fA-F]+|0o[0-7]+|0b[01]+|(?:[1-9][0-9]*|0)(?:\.[0-9])?|\.[0-9]+/,
         BooleanLiteral: /true|false/,
         StringLiteral: /\"(?:[^"\n]|\\[\s\S])*\"|\'(?:[^'\n]|\\[\s\S])*\'/,
         NullLiteral: /null/,
         Keywords: /if|else|for|function|let|var/,
         Identifier: /[a-zA-Z_$][a-a-zA-Z0-9_$]*/,
-        Punctuator: /\,|\?|\:|\{|\}|\=\>|\.|\(|\)|\=\=|\=|\<|\+\+|\*|\+|\[|\]|\;/
+        Punctuator: /\|\||\&\&|\,|\?|\:|\{|\}|\=\>|\.|\(|\)|\=\=|\=|\<|\+\+|\*|\+|\[|\]|\;/
     }, "g", "InputElement")
 
     while (regexp.lastIndex < str.length) {
