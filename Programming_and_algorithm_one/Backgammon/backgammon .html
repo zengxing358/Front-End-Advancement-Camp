@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div><button type="button" id="resetbutton">重新开始</button></div>
+		<canvas id='chess' width='450' height='450'></canvas>
+		<script type="text/javascript">
+			var replay=document.getElementById("resetbutton")
+			var chess=document.getElementById("chess")
+			var chessBoard=[]
+			var wins=[]  //赢法数组
+			var count=0
+			var myWin=[]
+			var computerWin=[]
+			var winProb=[]
+			var comwinProb=[]
+<<<<<<< HEAD
+=======
+			
+>>>>>>> first commit
+			var setcontext=function(){
+				var context=chess.getContext('2d')
+				//重制画布
+				context.clearRect(0, 0, chess.width, chess.height);
+				//绘制棋盘
+				context.fillStyle="#999"
+				context.beginPath()
+				for(let i=0;i<15;i++){
+					context.moveTo(15,15+i*30)
+					context.lineTo(435,15+i*30)
+					context.moveTo(15+i*30,15)
+					context.lineTo(15+i*30,435)
+					context.stroke()
+				}
+				//初始化棋盘数组
+				for(let i=0;i<15;i++){
+					chessBoard[i]=[]
+					for(let j=0;j<15;j++){
+						chessBoard[i][j]=0
+					}
+				}
+				//初始化赢法数组
+				for(let i=0;i<15;i++){
+					wins[i]=[]
+					winProb[i]=[]
+					comwinProb[i]=[]
+					for(let j=0;j<15;j++){
+						wins[i][j]=[]
+						winProb[i][j]=0
+						comwinProb[i][j]=0
+					}
+				}
+				//计算赢的方法
+				for(let i=14;i>=4;i--){
+					for(let j=0;j<11;j++){
+<<<<<<< HEAD
+						for(let k=0;k<5;k++){
+							wins[i-k][j+k][count]=true
+							winProb[i-k][j+k]++
+							comwinProb[i-k][j+k]++
+=======
+						winProb[i][j]++
+						comwinProb[i][j]++
+						for(let k=0;k<5;k++){
+							wins[i-k][j+k][count]=true
+>>>>>>> first commit
+						}
+						count++
+					}
+				}
+				for(let i=0;i<11;i++){
+<<<<<<< HEAD
+					for(let j=0;j<11;j++){
+						for(let k=0;k<5;k++){
+							wins[i+k][j+k][count]=true
+							winProb[i+k][j+k]++
+							comwinProb[i+k][j+k]++
+						}
+						count++
+					}
+				}
+				for(let i=0;i<11;i++){
+					for(let j=0;j<15;j++){
+						for(let k=0;k<5;k++){
+							wins[i+k][j][count]=true
+							winProb[i+k][j]++
+							comwinProb[i+k][j]++
+=======
+					for(let j=14;j>=4;j--){
+						winProb[i][j]++
+						comwinProb[i][j]++
+					}
+				}
+				for(let i=0;i<11;i++){
+					for(let j=0;j<11;j++){
+						winProb[i][j]++
+						comwinProb[i][j]++
+						for(let k=0;k<5;k++){
+							wins[i+k][j+k][count]=true
+>>>>>>> first commit
+						}
+						count++
+					}
+				}
+<<<<<<< HEAD
+				for(let i=0;i<15;i++){
+					for(let j=0;j<11;j++){
+						for(let k=0;k<5;k++){
+							wins[i][j+k][count]=true
+							winProb[i][j+k]++
+							comwinProb[i][j+k]++
+=======
+				for(let i=14;i>=4;i--){
+					for(let j=14;j>=4;j--){
+						winProb[i][j]++
+						comwinProb[i][j]++
+					}
+				}
+				for(let i=0;i<11;i++){
+					for(let j=0;j<15;j++){
+						winProb[i][j]++
+						comwinProb[i][j]++
+						for(let k=0;k<5;k++){
+							wins[i+k][j][count]=true
+						}
+						count++
+					}
+				}
+				for(let i=14;i>=4;i--){
+					for(let j=0;j<15;j++){
+						winProb[i][j]++
+						comwinProb[i][j]++
+					}
+				}
+				for(let i=0;i<15;i++){
+					for(let j=0;j<11;j++){
+						winProb[i][j]++
+						comwinProb[i][j]++
+						for(let k=0;k<5;k++){
+							wins[i][j+k][count]=true
+>>>>>>> first commit
+						}
+						count++
+					}
+				}
+<<<<<<< HEAD
+				var tempwin=[]
+				var tempcom=[]
+				for(let i=0;i<15;i++){
+					tempwin[i]=Object.create(winProb[i])
+					tempcom[i]=Object.create(comwinProb[i])
+				}
+				for(let i=0;i<15;i++){
+					for(let j=0;j<15;j++){
+						for(let x=-1;x<=1;x++){
+							for(let y=-1;y<=1;y++){
+								if(x==0 && y==0){
+									continue
+								}
+								if(i+x>=0 && i+x<15 && j+y>=0 && j+y<15){
+									winProb[i][j]+=tempwin[i+x][j+y]
+									comwinProb[i][j]+=tempcom[i+x][j+y]
+								}
+							}
+						}
+					}
+				}
+
+=======
+				for(let i=0;i<15;i++){
+					for(let j=14;j>=4;j--){
+						winProb[i][j]++
+						comwinProb[i][j]++
+					}
+				}
+>>>>>>> first commit
+				// 初始化赢的格子
+				for(let i=0;i<count;i++){
+					myWin[i]=0
+					computerWin[i]=0
+				}
+			}
+			setcontext()
+			replay.onclick=function(){
+				setcontext()
+			}
+			//玩家点击
+			chess.onclick=function(e){
+				var i=Math.floor(e.offsetX/30)
+				var j=Math.floor(e.offsetY/30)
+				if (chessBoard[i][j]==1){
+					return
+				}
+				var context=chess.getContext('2d')
+				context.beginPath()
+				context.arc(15+i*30,15+j*30,13,0,2*Math.PI)
+				var grd=context.createRadialGradient(15+i*30,15+j*30,13,15+i*30+2,15+j*30-2,0)
+				grd.addColorStop(0,'black')
+				grd.addColorStop(1,'white')
+				context.fillStyle=grd
+				context.fill()
+				context.stroke()
+				chessBoard[i][j]=1
+				for(let k=0;k<count;k++){
+					if(wins[i][j][k]){
+						myWin[k]++
+					}
+					if(myWin[k]==5){
+						alert("恭喜，你赢了~~~")
+						return
+					}
+				}
+				for(let k=1;k<5;k++){
+<<<<<<< HEAD
+					if(i-k>=0){
+						comwinProb[i-k][j]-=(5-k)
+					}
+					if(j-k>=0){
+						comwinProb[i][j-k]-=(5-k)
+					}
+					if(i+k<15){
+						comwinProb[i+k][j]-=(5-k)
+					}
+					if(j+k<15){
+						comwinProb[i][j+k]-=(5-k)
+					}
+					if(i-k>=0 && j-k>=0){
+						comwinProb[i-k][j-k]-=(5-k)
+					}
+					if(i+k<15 && j+k<15){
+						comwinProb[i+k][j+k]-=(5-k)
+					}
+					if(i-k>=0 && j+k<15){
+						comwinProb[i-k][j+k]-=(5-k)
+					}
+					if(i+k<15 && j-k>=0){
+						comwinProb[i+k][j-k]-=(5-k)
+=======
+					if(i-k>=0 && comwinProb[i-k][j]>0){
+						comwinProb[i-k][j]--
+					}
+					if(j-k>=0 && comwinProb[i][j-k]>0){
+						comwinProb[i][j-k]--
+					}
+					if(i+k<15 && comwinProb[i+k][j]>0){
+						comwinProb[i+k][j]--
+					}
+					if(j+k<15 && comwinProb[i][j+k]>0){
+						comwinProb[i][j+k]--
+					}
+					if(i-k>=0 && j-k>=0 && comwinProb[i-k][j-k]>0){
+						comwinProb[i-k][j-k]--
+					}
+					if(i+k<15 && j+k<15 && comwinProb[i+k][j+k]>0){
+						comwinProb[i+k][j+k]--
+					}
+					if(i-k>=0 && j+k<15 && comwinProb[i-k][j+k]>0){
+						comwinProb[i-k][j+k]--
+					}
+					if(i+k<15 && j-k>=0 && comwinProb[i+k][j-k]>0){
+						comwinProb[i+k][j-k]--
+>>>>>>> first commit
+					}
+				}
+				for(let k=1;k<5;k++){
+					if(i-k>=0){
+						winProb[i-k][j]+=(5-k)
+					}
+					if(j-k>=0){
+						winProb[i][j-k]+=(5-k)
+					}
+					if(i+k<15){
+						winProb[i+k][j]+=(5-k)
+					}
+					if(j+k<15){
+						winProb[i][j+k]+=(5-k)
+					}
+					if(i-k>=0 && j-k>=0){
+						winProb[i-k][j-k]+=(5-k)
+					}
+					if(i+k<15 && j+k<15){
+						winProb[i+k][j+k]+=(5-k)
+					}
+					if(i-k>=0 && j+k<15){
+						winProb[i-k][j+k]+=(5-k)
+					}
+					if(i+k<15 && j-k>=0){
+						winProb[i+k][j-k]+=(5-k)
+					}
+				}
+				computerAI()
+			}
+			
+			// 计算机运行
+			function computerAI(){
+<<<<<<< HEAD
+				var myScore = [];
+				var computerScore = [];
+				var max = 0;
+				var u = 0,v = 0;
+			
+				for(var i = 0;i < 15;i++){
+					myScore[i] = [];
+					computerScore[i] = [];
+					for(var j = 0;j < 15;j++){
+						myScore[i][j]=0;
+						computerScore[i][j] = 0;
+					}
+				}
+			
+				for(var i = 0;i < 15;i++){
+					for(var j = 0;j < 15;j++){
+						if(chessBoard[i][j] == 0){
+							for(var k = 0;k < count;k++){
+								if(wins[i][j][k]){
+									switch(myWin[k]){
+										case 1: myScore[i][j]+=Math.max(200-computerWin[k]*100,0);break;
+										case 2: myScore[i][j]+=Math.max(600-computerWin[k]*300,0);break;
+										case 3: myScore[i][j]+=Math.max(5000-computerWin[k]*3000,0);break;
+										case 4: myScore[i][j]+=20000;break;
+=======
+				var myScore=[]
+				var computerScore=[]
+				var max=0
+				var u=0
+				var v=0
+				//初始化分数
+				for(let i=0;i<15;i++){
+					myScore[i]=[]
+					computerScore[i]=[]
+					for(let j=0;j<15;j++){
+						myScore[i][j]=0
+						computerScore[i][j]=0
+					}
+				}
+				console.log(computerWin)
+				for(let i=0;i<15;i++){
+					for(let j=0;j<15;j++){
+						if(chessBoard[i][j]==0){
+							for(let k=0;k<count;k++){
+								if(wins[i][j][k]){
+									switch(myWin[k]){
+										case 1: myScore[i][j]+=10*winProb[i][j];break;
+										case 2: myScore[i][j]+=100*winProb[i][j];break;
+										case 3: myScore[i][j]+=10000*winProb[i][j];break;
+										case 4: myScore[i][j]+=1000000;break;
+>>>>>>> first commit
+									}
+									
+									switch(computerWin[k]){
+<<<<<<< HEAD
+										case 1 : computerScore[i][j]+=Math.max(220-myWin[k]*100,0);break;
+										case 2 : computerScore[i][j]+=Math.max(660-myWin[k]*300,0);break;
+										case 3: computerScore[i][j]+=Math.max(5500-myWin[k]*3000,0);break;
+										case 4: computerScore[i][j]+=40000;break;
+									}
+								}
+							}
+
+							if(myScore[i][j]>max){
+								max = myScore[i][j];
+								u = i;
+								v = j;
+							}else if(myScore[i][j] == max){
+								if(computerScore[i][j] > computerScore[u][v]){
+									u = i;
+									v = j;
+								}else if(computerScore[i][j] == computerScore[u][v]){
+									if(winProb[i][j]>winProb[u][v]){
+										u = i;
+										v = j;
+									}else if(winProb[i][j]==winProb[u][v]){
+										if(computerWin[i][j]>computerWin[u][v]){
+											u = i;
+											v = j;
+										}
+									}
+									
+								}
+							}
+
+							//进攻
+							if(computerScore[i][j] > max){
+								max = computerScore[i][j];
+								u = i;
+								v = j;
+							}
+							else if(computerScore[i][j] == max){
+								if(myScore[i][j] > myScore[u][v]){
+									u = i;
+									v = j;
+								}else if(myScore[i][j]==myScore[u][v]){
+									if(computerWin[i][j]>computerWin[u][v]){
+										u = i;
+										v = j;
+									}else if(computerWin[i][j]==computerWin[u][v]){
+										if(winProb[i][j]>winProb[u][v]){
+											u = i;
+											v = j;
+										}
+									}
+								}
+							}
+=======
+										case 1 : computerScore[i][j]+=15*comwinProb[i][j];break;
+										case 2 : computerScore[i][j]+=150*comwinProb[i][j];break;
+										case 3: computerScore[i][j]+=30000*comwinProb[i][j];break;
+										case 4: computerScore[i][j]+=5000000;break;
+									}
+								}
+							}
+							//计算进攻
+							if(computerScore[i][j]>max){
+								max=computerScore[i][j]
+								u=i
+								v=j
+							}else if(computerScore[i][j]==max){
+								if (myScore[i][j]>myScore[u][v]){
+									u=i
+									v=j
+								}
+							}	
+							
+							if(myScore[i][j]>max){
+								max=myScore[i][j]
+								u=i
+								v=j
+							}else if(myScore[i][j]==max){
+								if(computerScore[i][j]>computerScore[u][v]){
+									u=i
+									v=j
+								}
+							}
+							
+										
+>>>>>>> first commit
+						}
+					}
+				}
+
+				var context = chess.getContext('2d');
+			
+				context.beginPath();
+				context.arc(15+u*30,15+v*30,13,0,2*Math.PI);
+				var grd = context.createRadialGradient(15+u*30,15+v*30,13,15+u*30+2,15+v*30-2,0);
+			
+				grd.addColorStop(0,'#afafaf');
+				grd.addColorStop(1,'white');
+				context.fillStyle=grd;
+				context.fill();
+				context.stroke();
+				chessBoard[u][v] = 2;
+				
+				for(var k = 0;k < count;k++){
+					if(wins[u][v][k]){
+						computerWin[k]++;
+						if(computerWin[k] == 5){
+							alert('电脑赢了')
+							return
+						}
+					}
+				}
+				
+				for(let k=1;k<5;k++){
+<<<<<<< HEAD
+					if(u-k>=0){
+						winProb[u-k][v]-=(5-k)
+					}
+					if(v-k>=0){
+						winProb[u][v-k]-=(5-k)
+					}
+					if(u+k<15){
+						winProb[u+k][v]-=(5-k)
+					}
+					if(v+k<15){
+						winProb[u][v+k]-=(5-k)
+					}
+					if(u-k>=0 && v-k>=0){
+						winProb[u-k][v-k]-=(5-k)
+					}
+					if(u+k<15 && v+k<15){
+						winProb[u+k][v+k]-=(5-k)
+					}
+					if(u-k>=0 && v+k<15){
+						winProb[u-k][v+k]-=(5-k)
+					}
+					if(u+k<15 && v-k>=0){
+						winProb[u+k][v-k]-=(5-k)
+					}
+				}
+				for(let k=1;k<5;k++){
+					if(u-k>=0){
+						comwinProb[u-k][v]+=(5-k)
+					}
+					if(v-k>=0){
+						comwinProb[u][v-k]+=(5-k)
+					}
+					if(u+k<15){
+						comwinProb[u+k][v]+=(5-k)
+					}
+					if(v+k<15){
+						comwinProb[u][v+k]+=(5-k)
+					}
+					if(u-k>=0 && v-k>=0){
+						comwinProb[u-k][v-k]+=(5-k)
+					}
+					if(u+k<15 && v+k<15){
+						comwinProb[u+k][v+k]+=(5-k)
+					}
+					if(u-k>=0 && v+k<15){
+						comwinProb[u-k][v+k]+=(5-k)
+					}
+					if(u+k<15 && v-k>=0){
+						comwinProb[u+k][v-k]+=(5-k)
+					}
+				}
+			
+=======
+					if(u-k>=0 && winProb[u-k][v]>0){
+						winProb[u-k][v]--
+					}
+					if(v-k>=0 && winProb[u][v-k]>0){
+						winProb[u][v-k]--
+					}
+					if(u+k<15 && winProb[u+k][v]>0){
+						winProb[u+k][v]--
+					}
+					if(v+k<15 && winProb[u][v+k]>0){
+						winProb[u][v+k]--
+					}
+					if(u-k>=0 && v-k>=0 && winProb[u-k][v-k]>0){
+						winProb[u-k][v-k]--
+					}
+					if(u+k<15 && v+k<15 && winProb[u+k][v+k]>0){
+						winProb[u+k][v+k]--
+					}
+					if(u-k>=0 && v+k<15 && winProb[u-k][v+k]>0){
+						winProb[u-k][v+k]--
+					}
+					if(u+k<15 && v-k>=0 && winProb[u+k][v-k]>0){
+						winProb[u+k][v-k]--
+					}
+				}
+>>>>>>> first commit
+			}
+		</script>
+	</body>
+</html>

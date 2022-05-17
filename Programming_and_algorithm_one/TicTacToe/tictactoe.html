@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			#board{
+				width: 350px;
+			}
+			.cell{
+				width: 100px;
+				height: 100px;
+				border: solid 1px white;
+				background-color: green;
+				display: inline-block;
+				vertical-align: middle;
+				line-height: 100px;
+				font-size: 50px;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="board">
+		</div>
+		
+		<script type="text/javascript">
+			let pattern=[
+				[0,0,0],
+				[0,0,0],
+				[0,0,0]
+			]
+			let symbol=1
+			function ceate(){
+				let board=document.getElementById("board")
+				for(let i=0;i<3;i++){
+					for(let j=0;j<3;j++){
+						let cell=document.createElement("div")
+						cell.classList.add("cell")
+						cell.innerHTML=pattern[i][j]==2?"❌":pattern[i][j]==1?"⭕":""
+						cell.addEventListener("click",()=>userMove(i,j))
+						board.appendChild(cell)
+					}
+				}
+			}
+			function show(){
+				let board=document.getElementById("board")
+				var cell = board.children;
+				for(let i=0;i<3;i++){
+					for(let j=0;j<3;j++){
+						cell[i*3+j].innerHTML=pattern[i][j]==2?"❌":pattern[i][j]==1?"⭕":""
+					}
+				}
+			}
+			ceate()
+			function userMove(x,y){
+				if (pattern[x][y]!=0){
+					return
+				}
+				pattern[x][y]=symbol
+				if(check(pattern,symbol)){
+					alert("恭喜，你赢了")
+					return
+				}
+				symbol=3-symbol
+				show()
+				computerMove()
+			}
+			function check(pattern,symbol){
+				var cols=new Array(3).fill(0);
+				var rows=new Array(3).fill(0);
+				var x=0
+				var y=0
+				for(let i=0;i<3;i++){
+					for(let j=0;j<3;j++){
+						if(pattern[i][j]==symbol){
+							cols[j]+=1
+							rows[i]+=1
+							if (i==j){
+								x+=1
+							}
+							if(i+j==2){
+								y+=1
+							}
+						}
+					}
+				}
+				if (x==3 || y==3 || cols.indexOf(3)!=-1 || rows.indexOf(3)!=-1){
+					return true
+				}
+				return false
+			}
+			
+			function clone(pattern){
+				var temp=[]
+				for(let i=0;i<3;i++){
+					temp[i]=Object.create(pattern[i])
+				}
+				return temp
+			}
+			function willWin(pattern,symbol){
+				for(let i=0;i<3;i++){
+					for(let j=0;j<3;j++){
+						if(pattern[i][j]==0){
+							let temp=clone(pattern)
+							temp[i][j]=symbol
+							if(check(temp,symbol)){
+								return [i,j]
+							}
+						}
+					}
+				}
+				return null
+			}
+			function bestChoice(pattern,symbol){
+				let point=willWin(pattern,symbol)
+				if(point){
+					return {
+						point:point,
+						reslut:1
+					}
+				}
+
+				outer:for(let i=0;i<3;i++){
+					for(let j=0;j<3;j++){
+						if(pattern[i][j]==0){
+							let temp=clone(pattern)
+							temp[i][j]=symbol
+							let opp=bestChoice(temp,3-symbol)
+							if(opp.reslut==1){
+								point=opp.point
+								result=0
+								break outer
+							}else if(opp.reslut==-1){
+								point=[i,j]
+								result=1
+								break outer
+							}else{
+								point=[i,j]
+								result=0
+							}
+						}
+					}
+				}
+				return {
+					point:point,
+					result:result
+				}
+			}
+			function computerMove(){
+				let choice=bestChoice(pattern,symbol)
+				if(choice.point){
+					pattern[choice.point[0]][choice.point[1]]=symbol
+				}
+				if (check(pattern,symbol)){
+					alert("很遗憾，电脑赢了")
+					return
+				}
+				symbol=3-symbol
+				show()
+			}
+		</script>
+	</body>
+</html>
